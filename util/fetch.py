@@ -46,7 +46,9 @@ async def fetch(
 ) -> Union[bool, None]:
     logger.debug(f"Fetch: {url}, {kwargs}")
     async with session.request(method, url, **kwargs) as resp:
+        logger.debug(f"Fetched: {await resp.text()}")
         if not resp.ok:
+            logger.error(resp.status)
             return None
         return True
 
