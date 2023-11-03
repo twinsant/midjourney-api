@@ -1,8 +1,16 @@
+import os
 import json
 from enum import Enum
 from typing import Dict, Any, Union
 
 import aiohttp
+from aiohttp_socks import ProxyConnector
+
+from dotenv import load_dotenv
+load_dotenv()
+
+PROXY = os.getenv("PROXY")
+VERSION = os.getenv("VERSION", '1166847114203123795')
 
 from lib.api import CHANNEL_ID, USER_TOKEN, GUILD_ID
 from util.fetch import fetch, fetch_json, FetchMethod
@@ -32,6 +40,7 @@ class TriggerType(str, Enum):
 
 async def trigger(payload: Dict[str, Any]):
     async with aiohttp.ClientSession(
+            connector=ProxyConnector.from_url(PROXY),
             timeout=aiohttp.ClientTimeout(total=30),
             headers=HEADERS
     ) as session:
@@ -111,7 +120,7 @@ def _trigger_payload(type_: int, data: Dict[str, Any], **kwargs) -> Dict[str, An
 
 async def generate(prompt: str, **kwargs):
     payload = _trigger_payload(2, {
-        "version": "1118961510123847772",
+        "version": VERSION,
         "id": "938956540159881230",
         "name": "imagine",
         "type": 1,
